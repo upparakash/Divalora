@@ -1,0 +1,25 @@
+.category-intro {
+  padding: 70px 48px 0;
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-intro h1,
+.category-intro h2 {
+  font-size: 2.6rem;
+}
+
+.category-intro p {
+  color: var(--charcoal-soft);
+  font-size: 0.98rem;
+}
+
+@media (max-width: 720px) {
+  .category-intro {
+    padding: 50px 22px 0;
+  }
+}

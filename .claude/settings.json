@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Stop-Process -Id 39620,40884,20928,34708,12228,2276 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -Command \"Get-CimInstance Win32_Process -Filter \\\\\"Name='node.exe'\\\\\" | Select-Object ProcessId,CommandLine\")"
+    ]
+  }
+}

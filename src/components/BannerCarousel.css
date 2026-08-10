@@ -1,0 +1,87 @@
+.banner-carousel {
+  position: relative;
+}
+
+.banner-carousel:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: -4px;
+}
+
+.banner-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.banner-carousel__arrow:hover {
+  background: var(--paper);
+}
+
+.banner-carousel__arrow--prev {
+  left: 20px;
+}
+
+.banner-carousel__arrow--next {
+  right: 20px;
+}
+
+.banner-carousel__dots {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+}
+
+.banner-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--paper);
+  background: transparent;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.banner-carousel__dot.is-active {
+  background: var(--paper);
+  transform: scale(1.15);
+}
+
+@media (max-width: 720px) {
+  /* Vertically centered arrows collide with the hero title/subtitle on
+     narrow screens — move them down to the same bottom band as the dots
+     instead, clear of the text regardless of how many lines it wraps to. */
+  .banner-carousel__arrow {
+    width: 32px;
+    height: 32px;
+    top: auto;
+    bottom: 14px;
+    transform: none;
+  }
+
+  .banner-carousel__arrow--prev {
+    left: 16px;
+  }
+
+  .banner-carousel__arrow--next {
+    right: 16px;
+  }
+
+  .banner-carousel__dots {
+    bottom: 22px;
+  }
+}

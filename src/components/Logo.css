@@ -1,0 +1,62 @@
+.logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+}
+
+.logo__word {
+  font-family: var(--font-logo);
+  font-size: 1.9rem;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  padding-left: 0.14em;
+}
+
+.logo--dark .logo__word {
+  color: var(--ink);
+}
+
+.logo--light .logo__word {
+  color: var(--paper);
+}
+
+.logo__rule {
+  display: block;
+  margin-top: 8px;
+  width: 100%;
+  height: 1px;
+  background: var(--ink);
+}
+
+.logo--light .logo__rule {
+  background: var(--paper);
+}
+
+.logo--compact {
+  font-family: var(--font-logo);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  padding-left: 0.1em;
+}
+
+.logo--compact.logo--dark {
+  color: var(--ink);
+}
+
+.logo--compact.logo--light {
+  color: var(--paper);
+}
+
+@media (max-width: 720px) {
+  .logo__word {
+    font-size: 1.6rem;
+    letter-spacing: 0.1em;
+  }
+
+  .logo--compact {
+    font-size: 1.3rem;
+    letter-spacing: 0.08em;
+  }
+}

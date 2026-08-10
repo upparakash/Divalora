@@ -1,0 +1,90 @@
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 34px 26px;
+  padding: 60px 48px 100px;
+}
+
+.products__item {
+  display: block;
+}
+
+.products__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--cream-deep);
+}
+
+.products__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.4s ease;
+}
+
+.products__img--hover {
+  opacity: 0;
+}
+
+.products__item:hover .products__img--hover {
+  opacity: 1;
+}
+
+.products__placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.products__info {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 12px;
+  gap: 10px;
+}
+
+.products__info h3 {
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+.products__price {
+  font-size: 0.85rem;
+  color: var(--gold-dark);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.products-state {
+  padding: 60px 48px;
+  text-align: center;
+  color: var(--charcoal-soft);
+  font-size: 0.9rem;
+}
+
+/* Reserves roughly the space a ProductGrid will occupy once its (async)
+   data arrives, so pages don't shove everything below them down and cause
+   a layout shift when results pop in. */
+.products-skeleton {
+  height: 520px;
+}
+
+@media (max-width: 720px) {
+  .products {
+    padding: 40px 22px 70px;
+  }
+
+  .products-state {
+    padding: 40px 22px;
+  }
+
+  .products-skeleton {
+    height: 640px;
+  }
+}

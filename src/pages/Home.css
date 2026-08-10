@@ -1,0 +1,16 @@
+/* Pulls the hero up under the fixed, transparent-at-top navbar so the
+   banner image bleeds to the very top of the viewport (Prada-style). The
+   navbar switches to a solid white strip once you scroll past it. */
+.home-hero-bleed {
+  margin-top: calc(-1 * var(--nav-height));
+}
+
+.home-featured {
+  padding-top: 90px;
+}
+
+@media (max-width: 720px) {
+  .home-featured {
+    padding-top: 60px;
+  }
+}
