@@ -1,11 +1,75 @@
+import { DEMO_PRODUCTS, DEMO_CATEGORIES } from "./staticProducts.js";
+
 const API_BASE = "/api";
+
+// --- Static fallbacks -------------------------------------------------
+// No backend is deployed for this build yet, so every API call below
+// degrades to filtering/sorting the static demo catalogue instead of
+// throwing. This keeps every page functional for a demo even with no
+// server reachable. Once a real backend is live, these fallbacks simply
+// stop triggering (the real request already succeeded).
+
+const SORTERS = {
+  newest: (a, b) => b.id - a.id,
+  price_asc: (a, b) => a.price - b.price,
+  price_desc: (a, b) => b.price - a.price,
+  curated: (a, b) => a.id - b.id,
+};
+
+function staticProductsResponse({ category, sort, page, limit, featured, isNew, excludeSlug } = {}) {
+  let items = [...DEMO_PRODUCTS];
+  if (category) items = items.filter((p) => p.category === category);
+  if (featured !== undefined) items = items.filter((p) => p.isFeatured === (featured === true || featured === "true"));
+  if (isNew !== undefined) items = items.filter((p) => p.isNew === (isNew === true || isNew === "true"));
+  if (excludeSlug) items = items.filter((p) => p.slug !== excludeSlug);
+
+  items = items.sort(SORTERS[sort] || SORTERS.newest);
+
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.min(60, Math.max(1, parseInt(limit, 10) || 24));
+  const start = (pageNum - 1) * limitNum;
+  const paged = items.slice(start, start + limitNum);
+
+  return { items: paged, total: items.length, page: pageNum, limit: limitNum };
+}
+
+function staticProduct(idOrSlug) {
+  const product = DEMO_PRODUCTS.find((p) => p.slug === idOrSlug || p.styleCode === idOrSlug);
+  if (!product) {
+    const error = new Error("Product not found");
+    error.status = 404;
+    throw error;
+  }
+  return product;
+}
+
+function staticSearch(q, limit) {
+  const query = (q || "").trim().toLowerCase();
+  if (query.length < 2) return { items: [], total: 0, query: q };
+  const limitNum = Math.min(60, Math.max(1, parseInt(limit, 10) || 8));
+  const items = DEMO_PRODUCTS.filter((p) =>
+    [p.name, p.styleCode, p.category, p.colorway].some((f) => f?.toLowerCase().includes(query))
+  ).slice(0, limitNum);
+  return { items, total: items.length, query: q };
+}
 
 async function request(path) {
   const res = await fetch(`${API_BASE}${path}`);
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
+    // A real backend always answers with JSON, even for errors. If parsing
+    // fails, this wasn't our API at all — e.g. Vercel's own 404 page when
+    // no backend is deployed — so callers shouldn't treat it as a genuine
+    // "not found" from the app.
+    let body = {};
+    let isApiResponse = true;
+    try {
+      body = await res.json();
+    } catch {
+      isApiResponse = false;
+    }
     const error = new Error(body.error || `Request failed: ${res.status}`);
     error.status = res.status;
+    error.isApiResponse = isApiResponse;
     throw error;
   }
   return res.json();
@@ -21,21 +85,27 @@ export function getProducts({ category, sort, page, limit, featured, isNew, excl
   if (isNew !== undefined) params.set("isNew", isNew);
   if (excludeSlug) params.set("excludeSlug", excludeSlug);
   const query = params.toString();
-  return request(`/products${query ? `?${query}` : ""}`);
+  return request(`/products${query ? `?${query}` : ""}`).catch(() =>
+    staticProductsResponse({ category, sort, page, limit, featured, isNew, excludeSlug })
+  );
 }
 
 export function getProduct(idOrSlug) {
-  return request(`/products/${encodeURIComponent(idOrSlug)}`);
+  return request(`/products/${encodeURIComponent(idOrSlug)}`).catch((err) => {
+    // Only trust a 404 as "genuinely not found" if a real backend answered.
+    if (err.status === 404 && err.isApiResponse) throw err;
+    return staticProduct(idOrSlug);
+  });
 }
 
 export function getCategories() {
-  return request("/categories");
+  return request("/categories").catch(() => DEMO_CATEGORIES);
 }
 
 export function search(q, limit) {
   const params = new URLSearchParams({ q });
   if (limit) params.set("limit", limit);
-  return request(`/search?${params.toString()}`);
+  return request(`/search?${params.toString()}`).catch(() => staticSearch(q, limit));
 }
 
 // Product photography convention: /public/products/<slug>/<filename>.
