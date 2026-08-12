@@ -33,8 +33,8 @@ export default function Home() {
             ctaLabel: "Discover the Collection",
             ctaTo: "/handbags",
             tone: "charcoal",
-            mediaUrl: "/products/galleria-top-handle/1.jpg",
-            mediaType: "image",
+            mediaUrl: "/videos/home-hero.mp4",
+            mediaType: "video",
           }}
         />
       </div>
