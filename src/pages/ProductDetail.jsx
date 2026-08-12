@@ -10,11 +10,34 @@ import { formatPrice } from "../lib/format.js";
 import { categorySlugFromLabel } from "../lib/categories.js";
 import "./ProductDetail.css";
 
+// Static fallback shown when the API is unreachable, so the page never goes
+// blank if the backend/DB is down — mirrors the BannerCarousel fallback
+// pattern used on the home page.
+const STATIC_FALLBACK_PRODUCT = {
+  slug: "galleria-top-handle",
+  styleCode: "DVL-0142",
+  name: "Galleria Top-Handle",
+  category: "Top Handle",
+  price: 2450,
+  currency: "USD",
+  colorway: "Cognac",
+  material: "Full-grain Italian calfskin, brass hardware, suede lining.",
+  dimensions: '11" W x 8" H x 4.5" D',
+  description:
+    "Born from an archival sketch, the Galleria returns this season in supple leather — a study in structure and ease carried by hand since 1913.",
+  details: [
+    "Hand-cut and stitched in Milan",
+    "Detachable, adjustable shoulder strap",
+    "Interior zip and slip pockets",
+    "Protective dust bag included",
+  ],
+  images: ["1.jpg"],
+};
+
 export default function ProductDetail() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
-  const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
   const [related, setRelated] = useState(null);
   const [brokenImages, setBrokenImages] = useState(() => new Set());
@@ -23,7 +46,6 @@ export default function ProductDetail() {
   useEffect(() => {
     setProduct(null);
     setNotFound(false);
-    setError(null);
     setActiveImage(0);
     setRelated(null);
     setBrokenImages(new Set());
@@ -32,7 +54,7 @@ export default function ProductDetail() {
       .then(setProduct)
       .catch((err) => {
         if (err.status === 404) setNotFound(true);
-        else setError(err.message);
+        else setProduct(STATIC_FALLBACK_PRODUCT);
       });
   }, [slug]);
 
@@ -44,7 +66,6 @@ export default function ProductDetail() {
   }, [product]);
 
   if (notFound) return <NotFound />;
-  if (error) return <p className="container products-state">Couldn't load this product — {error}</p>;
 
   if (!product) {
     // Mirrors the loaded layout's structure/heights so the real content
